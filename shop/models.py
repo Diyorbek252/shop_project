@@ -2,6 +2,8 @@ from django.db import models
 from shop.utils import product_image_path
 from decimal import Decimal
 from django.templatetags.static import static
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 class Category(models.Model):
@@ -71,3 +73,32 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'{self.email} - {self.message}'
+    
+class Order(models.Model):
+    name = models.CharField(max_length=50)
+    phone = models.PositiveBigIntegerField()
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name="Mahsulot soni"
+    )
+    product = models.ForeignKey(Product,
+                                on_delete=models.CASCADE,
+                                related_name='orders',
+                                null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.name} - {self.phone}'
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            product = self.product
+
+            if product.stock >= self.quantity:
+                product.stock -= self.quantity
+                product.save()
+            else:
+                raise ValidationError(f"Omborda yetarli mahsulot yo'q. Qolgan: {product.stock}")  
+        
+        super().save(*args, **kwargs)

@@ -64,26 +64,59 @@
                         </div>
                         <p class="lead">{{product.description}}</p>
                         <div class="d-flex">
-                            <form>
+                            <form method="post" action="{% url 'order' product.id %}">
+                                {% csrf_token %}
                                 <div class="form-group">
                                     <h2>Place an order</h2>
                                 </div>
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger py-2 mb-3 small">
+                                        {% for error in form.non_field_errors %}
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+                                         {% endfor %}
+                                    </div>
+                                {% endif %}
+                                
                                 <div class="form-group mb-3">
-                                  <label for="formGroupExampleInput">Your name</label>
-                                  <input type="text" class="form-control"  placeholder="Your name">
+                                    <label for="formGroupExampleInput">Your name</label>
+                                    <input type="text" name="name" class="form-control" placeholder="Your name" required>
                                 </div>
+                                
                                 <div class="form-group mb-3">
-                                  <label for="formGroupExampleInput2">Your phone</label>
-                                  <input type="text" class="form-control" placeholder="Your phone">
+                                    <label for="formGroupExampleInput2">Your phone</label>
+                                    <input type="text" name="phone" class="form-control" placeholder="Your phone" required>
                                 </div>
-        
-                               
-        
-                                  <div class="form-group mb-3">
-                                   
-                                    <input type="text" class="btn btn-success" value="Send">
-                                  </div>
-                              </form>
+
+                                <!-- Yangi qo'shilgan Counter qismi -->
+                                <div class="form-group mb-4">
+                                    <label class="form-label d-block">Quantity (Soni)</label>
+                                    <div class="input-group" style="max-width: 150px;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="decrement()">-</button>
+                                        <input type="number" name="quantity" id="quantityInput" class="form-control text-center" value="1" min="1" required>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="increment()">+</button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <button type="submit" class="btn btn-success">Send</button>
+                                </div>
+                    </form>
+
+<!-- Tugmalar ishlashi uchun kichik JavaScript -->
+<script>
+    const input = document.getElementById('quantityInput');
+
+    function increment() {
+        input.value = parseInt(input.value) + 1;
+    }
+
+    function decrement() {
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+</script>
+
                            
                         </div>
                     </div>
@@ -95,10 +128,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="text-center">
-                        <h2>Latest comments</h2>
-                        <span class="count">({{product.comments.count}})</span>
+                        <h2>Latest comments</h2><span class="count">({{comments.count}})</span>
                     </div>
-                    {% for comment in product.comments.all %}
+                    {% for comment in comments %}
                             <div class="comment-card">
                                 <div class="comment-header">
                                     <div class="comment-meta">
@@ -124,39 +156,69 @@
 
                 </div>
 
-                <div class="col-8 offset-2 mt-5">
-                   
-                    <div class=" p-5">
-                        <div class="text-center">
-                            <h3>Add Comment</h3>
-                        </div>
-                    
-                    <form>
-                        <div class="form-group mb-3">
-                          <label for="formGroupExampleInput">Your name</label>
-                          <input type="text" class="form-control"  placeholder="Your name">
-                        </div>
-                        <div class="form-group mb-3">
-                          <label for="formGroupExampleInput2">Your email</label>
-                          <input type="text" class="form-control" placeholder="Your email">
-                        </div>
+               <div class="col-8 offset-2 mt-5">
+    <div class="p-5">
+        <div class="text-center">
+            <h3>Add Comment</h3>
+        </div>
 
-                        <div class="form-group mb-3">
-                            <label for="formGroupExampleInput2">Your comment</label>
-                           <textarea name="" class="form-control" id="" cols="30" rows="10"></textarea>
-                          </div>
+        <form method="post" action="{% url 'add_comment' product.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group mb-3">
+                <label for="name">Your name</label>
+                <input type="text" name="name" id="name" class="form-control" placeholder="Your name" required>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="email">Your email</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="Your email" required>
+            </div>
 
-                          <div class="form-group mb-3">
-                           
-                            <input type="text" class="btn btn-success" value="Send">
-                          </div>
-                      </form>
-
-                    </div>
-                      
+            <!-- ⭐️ REYTING (1-5 Yulduz) -->
+            <div class="form-group mb-3">
+                <label class="d-block">Your Rating:</label>
+                <div class="rating-stars">
+                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="5 stars">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star">★</label>
                 </div>
             </div>
-        </div>
+
+            <!-- 📸 RASM YUKLASH -->
+            <div class="form-group mb-3">
+                <label for="image">Upload Image (Optional)</label>
+                <input type="file" name="image" id="image" class="form-control" accept="image/*">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="message">Your comment</label>
+                <textarea name="message" id="message" class="form-control" cols="30" rows="5" required></textarea>
+            </div>
+
+            <div class="form-group mb-3">
+                <input type="submit" class="btn btn-success w-100" value="Send Comment">
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 🎨 Yulduzchalar chiroyli chiqishi uchun CSS (Buni CSS faylingizga yoki <style> ichiga qo'ying) -->
+<style>
+.rating-stars {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    font-size: 1.8rem;
+}
+.rating-stars input { display: none; }
+.rating-stars label { color: #ccc; cursor: pointer; padding: 0 5px; }
+.rating-stars input:checked ~ label,
+.rating-stars label:hover,
+.rating-stars label:hover ~ label { color: #f5b301; }
+</style>
+
         <!-- Related items section-->
         <section class="py-5 bg-light">
             <div class="container px-4 px-lg-5 mt-5">
