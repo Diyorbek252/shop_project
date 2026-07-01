@@ -47,10 +47,6 @@ class Product(models.Model):
         return self.name
     
 
-
-
-
-
 class Comment(models.Model):
     
     class RatingChoices(models.IntegerChoices):
