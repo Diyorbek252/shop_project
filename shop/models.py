@@ -83,7 +83,7 @@ class Order(models.Model):
         verbose_name="Mahsulot soni"
     )
     product = models.ForeignKey(Product,
-                                on_delete=models.CASCADE,
+                                on_delete=models.SET_NULL,
                                 related_name='orders',
                                 null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -91,14 +91,3 @@ class Order(models.Model):
     def __str__(self):
         return f'{self.name} - {self.phone}'
     
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            product = self.product
-
-            if product.stock >= self.quantity:
-                product.stock -= self.quantity
-                product.save()
-            else:
-                raise ValidationError(f"Omborda yetarli mahsulot yo'q. Qolgan: {product.stock}")  
-        
-        super().save(*args, **kwargs)
