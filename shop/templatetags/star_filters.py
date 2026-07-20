@@ -24,3 +24,15 @@ def star_rating(value):
     empty_stars = "☆" * (5 - rounded)
 
     return full_stars + empty_stars
+
+@register.filter
+def format_price(value):
+    """
+    Narxni minglik guruhlarga ajratadi: 1234567 -> "1 234 567"
+    """
+    try:
+        value = int(round(float(value)))
+    except (TypeError, ValueError):
+        return value
+
+    return "{:,}".format(value).replace(",", " ")

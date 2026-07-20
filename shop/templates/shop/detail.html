@@ -1,5 +1,5 @@
 {%load static%}
-
+{%load star_filters %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -19,7 +19,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="{% url 'home'%}">Apelsin</a>
+                <a class="navbar-brand" href="{% url 'shop:home'%}">Apelsin</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -27,7 +27,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url 'home'%}">All Products</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:home'%}">All Products</a></li>
                                 <li><hr class="dropdown-divider" /></li>
                                 <li><a class="dropdown-item" href="#!">Popular Items</a></li>
                                 <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
@@ -50,7 +50,7 @@
         <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form method="post" action="{% url 'edit_product' product.id %}" enctype="multipart/form-data">
+                    <form method="post" action="{% url 'shop:edit_product' product.id %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="modal-header">
                             <h5 class="modal-title" id="editProductModalLabel">Mahsulotni tahrirlash</h5>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                        <form method="post" action="{% url 'delete_product' product.id %}">
+                        <form method="post" action="{% url 'shop:delete_product' product.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
                         </form>
@@ -99,15 +99,15 @@
                         <h1 class="display-5 fw-bolder">{{product.name}}</h1>
                         <div class="fs-5 mb-5">
                             {% if product.discount %}
-                                <span class="text-muted text-decoration-line-through">{{product.price}}</span>
-                                {{product.discounted_price}}
+                                <span class="text-muted text-decoration-line-through">{{product.price|format_price}}</span>
+                                {{product.discounted_price|format_price}} so'm
                             {%else%}
-                                {{product.price}}
+                                {{product.price|format_price}} so'm
                             {%endif%}
                         </div>
                         <p class="lead">{{product.description}}</p>
                         <div class="d-flex">
-                            <form method="post" action="{% url 'order' product.id %}">
+                            <form method="post" action="{% url 'shop:order' product.id %}">
                                 {% csrf_token %}
                                 <div class="form-group">
                                     <h2>Place an order</h2>
@@ -215,7 +215,7 @@
             <h3>Add Comment</h3>
         </div>
 
-        <form method="post" action="{% url 'add_comment' product.id %}" enctype="multipart/form-data">
+        <form method="post" action="{% url 'shop:add_comment' product.id %}" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="form-group mb-3">
@@ -289,7 +289,7 @@
                                         <!-- Product name-->
                                         <h5 class="fw-bolder">{{r_product.name}}</h5>
                                         <!-- Product price-->
-                                        {{r_product.price}}
+                                        {{r_product.price|format_price}} so'm
                                     </div>
                                 </div>
                                 <!-- Product actions-->

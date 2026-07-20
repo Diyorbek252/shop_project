@@ -19,7 +19,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="{%url 'home'%}">Apelsin</a>
+                <a class="navbar-brand" href="{%url 'shop:home'%}">Apelsin</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -28,10 +28,10 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url 'home' %}">All Products</a></li>
+                                <li><a class="dropdown-item" href="{% url 'shop:home' %}">All Products</a></li>
                                 <li><hr class="dropdown-divider" /></li>
                                 {% for category in categories %}
-                                    <li><a class="dropdown-item" href="{%url 'products_of_category' category.id%}">{{category.title.title}}</a></li>
+                                    <li><a class="dropdown-item" href="{%url 'shop:products_of_category' category.id%}">{{category.title.title}}</a></li>
                                 {%endfor%}
                             </ul>
                         </li>
@@ -44,10 +44,32 @@
                            
                         </button>
                     </form>
+                    {%if request.user.is_authenticated %}
+                        <a href="{% url 'users:logout' %}">
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                        </a>
+                    {%else%}
+                        <a href="{% url 'users:login' %}">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </a>
+                    {%endif%}
                 </div>
             </div>
                 
         </nav>
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <!-- Header-->
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">
@@ -82,7 +104,7 @@
         <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form method="post" action="{% url 'add_product' %}" enctype="multipart/form-data">
+                    <form method="post" action="{% url 'shop:add_product' %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="modal-header">
                             <h5 class="modal-title" id="addProductModalLabel">Yangi mahsulot qo'shish</h5>
@@ -120,16 +142,16 @@
                                         {%endif%}
                                         <!-- Product price-->
                                         {% if product.discount %}
-                                            <span class="text-muted text-decoration-line-through">{{product.price}}</span>
-                                            {{product.discounted_price}}
+                                            <span class="text-muted text-decoration-line-through">{{product.price|format_price}}</span>
+                                            {{product.discounted_price|format_price}} so'm
                                         {%else%}
-                                            {{product.price}}
+                                            {{product.price|format_price}} so'm
                                         {%endif%}
                                     </div>
                                 </div>
                                 <!-- Product actions-->
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{%url 'detail' product.id%}">View product</a></div>
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{%url 'shop:detail' product.id%}">View product</a></div>
                                 
                                     
                                 </div>

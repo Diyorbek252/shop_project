@@ -60,7 +60,7 @@ def add_comment(request, pk):
             comment = form.save(commit=False)
             comment.product = product
             comment.save()
-            return redirect('detail', pk)
+            return redirect('shop:detail', pk)
         else:
             form = CommentModelForm()
 
@@ -95,7 +95,7 @@ def order(request, pk):
                     messages.SUCCESS,
                     'Buyurtma muvaffaqiyatli amalga oshirildi'
                 )
-        return redirect('detail', product_id=pk)       
+        return redirect('shop:detail', product_id=pk)       
     context = {
         'product':product,
         'form':form
@@ -109,8 +109,8 @@ def add_product(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save()
-            return redirect('home')
-    return redirect('home')
+            return redirect('shop:home')
+    return redirect('shop:home')
 
 
 def edit_product(request, product_id):
@@ -119,7 +119,7 @@ def edit_product(request, product_id):
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            return redirect('detail', product_id=product.id)
+            return redirect('shop:detail', product_id=product.id)
     else:
         form = ProductForm(instance=product)
 
@@ -135,5 +135,5 @@ def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     if request.method == 'POST':
         product.delete()
-        return redirect('home',)
-    return redirect('detail', product_id=product.id)
+        return redirect('shop:home',)
+    return redirect('shop:detail', product_id=product.id)

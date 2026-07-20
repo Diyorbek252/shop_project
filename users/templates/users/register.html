@@ -1,0 +1,97 @@
+<!-- templates/users/register.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan o'tish</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'users/css/login.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="login-card">
+        <h2>Ro'yxatdan o'tish</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-danger{% endif %} text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger text-center">
+                Formada xatolik bor, iltimos maydonlarni tekshiring.
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'users:register' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Foydalanuvchi nomi</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="text-danger small">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Telefon raqami</label>
+                {{ form.phone_number }}
+                {% if form.phone_number.errors %}
+                    <div class="text-danger small">{{ form.phone_number.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Tug'ilgan sana</label>
+                {{ form.date_of_birth }}
+                {% if form.date_of_birth.errors %}
+                    <div class="text-danger small">{{ form.date_of_birth.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.avatar.id_for_label }}" class="form-label">Profil rasmi</label>
+                {{ form.avatar }}
+                {% if form.avatar.errors %}
+                    <div class="text-danger small">{{ form.avatar.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Parol</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="text-danger small">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Parolni tasdiqlang</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="text-danger small">{{ form.password2.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-login mt-2">Ro'yxatdan o'tish</button>
+        </form>
+
+        <div class="extra-links">
+            <span>Akkountingiz bormi? <a href="{% url 'users:login' %}">Kirish</a></span>
+        </div>
+    </div>
+</body>
+</html>

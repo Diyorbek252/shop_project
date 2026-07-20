@@ -1,6 +1,8 @@
 from django.urls import path
 from shop.views import shop, detail, add_comment, order, add_product, edit_product, delete_product
 
+app_name = 'shop'
+
 urlpatterns = [
     path('home/', shop, name='home'),
     path('category/<int:category_id>/products/',shop ,name='products_of_category'),
